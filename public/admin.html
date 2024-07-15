@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Landing Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            width: 100%;
+            margin: 20px;
+        }
+        h2 {
+            color: #999999;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #999999;
+            text-decoration: none;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #999999;
+        }
+        .message {
+            display: none;
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
+    <!-- Firebase Configuration -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMsTmgX69DGy7UFI8mv1wn7xBM4QTC3Ss",
+            authDomain: "chilin1.firebaseapp.com",
+            projectId: "chilin1",
+            storageBucket: "chilin1.appspot.com",
+            messagingSenderId: "904851088567",
+            appId: "1:904851088567:web:7e5272ef186b286573d932"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function addDomainAdmin() {
+            const domain = document.getElementById('domain').value;
+            const email = document.getElementById('email').value;
+            console.log("Attempting to add domain admin:", { domain, email });
+            try {
+                await setDoc(doc(db, 'DomainAdmins', domain), {
+                    nameAdmin: email
+                });
+                console.log("Document successfully written!");
+                // Очистить поля ввода
+                document.getElementById('domain').value = '';
+                document.getElementById('email').value = '';
+                // Показать сообщение
+                const messageElem = document.getElementById('message');
+                messageElem.style.display = 'block';
+                setTimeout(() => {
+                    messageElem.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                console.error('Error writing document: ', error);
+            }
+        }
+
+        // Add the function to the global window object
+        window.addDomainAdmin = addDomainAdmin;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Добавление сайта</h2>
+        <input type="text" id="domain" class="input-field" placeholder="Сайт">
+        <input type="email" id="email" class="input-field" placeholder="Почта администратора сайта">
+        <button class="button" onclick="addDomainAdmin()">Добавить</button>
+        <div id="message" class="message">Сайт успешно добавлен!</div>
+    </div>
+</body>
+</html>
